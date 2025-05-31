@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import csv
 import time
 
-# Configuración de ChromeDriver
+# ChromeDriver Configuration
 service = Service("/usr/local/bin/chromedriver")
 options = webdriver.ChromeOptions()
 options.binary_location = "/Users/salvacastro/Downloads/chrome-mac-arm64/GoogleChromeForTesting.app/Contents/MacOS/Google Chrome for Testing"
@@ -22,7 +22,7 @@ driver.get("https://web.whatsapp.com")
 
 input("\n📷 Escaneá el código QR y presioná ENTER cuando esté listo...\n")
 
-# Esperar a que cargue la interfaz de chats
+# Wait for the chat interface to load
 try:
     WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.XPATH, "//div[contains(@aria-label, 'Chat')]"))
@@ -32,65 +32,65 @@ except:
     driver.quit()
     exit()
 
-# Leer CSV y crear grupos
+# Read CSV and create groups
 with open("grupos_a_crear.csv", newline='') as archivo_csv:
     lector = csv.reader(archivo_csv)
     next(lector)  # encabezado
 
     for fila in lector:
-        nombre_grupo = fila[0].strip()
-        if not nombre_grupo:
+        group_name = fila[0].strip()
+        if not group_name:
             continue
 
-        print(f"🔧 Creando grupo: {nombre_grupo}")
+        print(f"🔧 Creando grupo: {group_name}")
 
         try:
-            # Botón flotante de "nuevo chat"
-            nuevo_chat = WebDriverWait(driver, 10).until(
+            # Floating "new chat" button
+            chat_name = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//span[@data-icon='new-chat-outline']"))
             )
-            nuevo_chat.click()
+            chat_name.click()
 
-            # Botón "Nuevo grupo"
-            nuevo_grupo = WebDriverWait(driver, 10).until(
+            # "New group" button
+            group_name = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//div[contains(text(),'New group')]"))
             )
-            nuevo_grupo.click()
+            group_name.click()
 
-            # Buscar contacto
-            input_busqueda = WebDriverWait(driver, 10).until(
+            # Search for contact
+            input_search = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Search name or number']"))
             )
-            input_busqueda.send_keys("Mio Uruguay")
+            input_search.send_keys("Mio Uruguay")
 
-            contacto = WebDriverWait(driver, 10).until(
+            contact = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//span[@title='Mio Uruguay']"))
             )
-            contacto.click()
+            contact.click()
 
-            # Botón "Siguiente"
-            siguiente = WebDriverWait(driver, 10).until(
+            # "Next" button
+            next = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//span[@data-icon='arrow-forward']"))
             )
-            siguiente.click()
+            next.click()
 
-            # Escribir nombre del grupo
-            input_nombre_grupo = WebDriverWait(driver, 10).until(
+            # Enter group name
+            input_group_name = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, "//div[@title='Group subject (optional)']//p[@class='selectable-text copyable-text x15bjb6t x1n2onr6']"))
             )
-            input_nombre_grupo.send_keys(nombre_grupo)
+            input_group_name.send_keys(group_name)
 
-            # Botón "Crear grupo"
-            crear_grupo = WebDriverWait(driver, 10).until(
+            # "Create group" button
+            create_grupo = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//span[@data-icon='checkmark-medium']"))
             )
-            crear_grupo.click()
+            create_grupo.click()
 
-            print(f"✅ Grupo '{nombre_grupo}' creado.")
+            print(f"✅ Grupo '{group_name}' creado.")
             time.sleep(3)
 
         except Exception as e:
-            print(f"⚠️ Error al crear el grupo '{nombre_grupo}': {e}")
+            print(f"⚠️ Error al crear el grupo '{group_name}': {e}")
             continue
 
 print("✅ Todos los grupos fueron procesados.")
